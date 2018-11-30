@@ -24,15 +24,15 @@ public class ReachCoefficient {
     }
 
     public static double getReachCoefficient(String userName, Twitter twitter) throws TwitterException {
-        List<Status> tweets = twitter.search(new Query("from=" + userName)).getTweets();
-        List<Status> mentions = twitter.search(new Query("q=" + userName)).getTweets();
+        List<Status> tweets = twitter.search(new Query("from:" + userName)).getTweets();
+        List<Status> mentions = twitter.search(new Query("to:" + userName)).getTweets();
         int followerCount = twitter.showUser(userName).getFollowersCount();
         return getReachCoefficient(followerCount, tweets, mentions);
     }
 
     public static double getReachCoefficient(User user, Twitter twitter) throws TwitterException {
-        List<Status> tweets = twitter.search(new Query("from=" + user.getName())).getTweets();
-        List<Status> mentions = twitter.search(new Query("q=" + user.getName())).getTweets();
+        List<Status> tweets = twitter.search(new Query("from:" + user.getName())).getTweets();
+        List<Status> mentions = twitter.search(new Query("to:" + user.getName())).getTweets();
         int followerCount = user.getFollowersCount();
         return getReachCoefficient(followerCount, tweets, mentions);
     }
