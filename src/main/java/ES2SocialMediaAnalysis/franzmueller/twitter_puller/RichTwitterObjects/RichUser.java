@@ -16,52 +16,46 @@ public class RichUser {
     protected long[] followerIDs;
 
 
-    public RichUser(String userName, Twitter twitter) throws TwitterException { //TODO dont throw
+    public RichUser(String userName, Twitter twitter) throws TwitterException {
         user = twitter.users().showUser(userName);
         userID = user.getId();
         followerCount = user.getFollowersCount();
         this.twitter = twitter;
     }
 
-    public RichUser(long userID, Twitter twitter) throws TwitterException { //TODO dont throw
+    public RichUser(long userID, Twitter twitter) throws TwitterException {
         user = twitter.users().showUser(userID);
         followerCount = user.getFollowersCount();
         this.userID = userID;
         this.twitter = twitter;
     }
 
+    public RichUser(User user, Twitter twitter) {
+        this.user = user;
+        this.twitter = twitter;
+        followerCount = user.getFollowersCount();
+    }
+
     public User getUser() throws TwitterException {
         return twitter.showUser(user.getId()); //creates a copy
     }
 
-    public double getReachCoefficient() throws TwitterException { //TODO dont throw
+    public double getReachCoefficient() throws TwitterException {
         if (reachCoefficient == 0) {
             return reachCoefficient = ReachCoefficient.getReachCoefficient(user, twitter);
         }
         return reachCoefficient;
     }
 
-    public long[] getFollowers() throws InterruptedException, TwitterException { //TODO dont throw
+    public long[] getFollowers() throws TwitterException {
         if (followerIDs == null) {
             long cursor = -1;
-            boolean runGood;
-            IDs ids = null;
+            IDs ids;
             do {
-                runGood = false;
-                try {
-                    ids = twitter.getFollowersIDs(userID, cursor);
-                    long[] followerIDs1 = ids.getIDs();
-                    followerIDs = ArrayUtils.addAll(followerIDs, followerIDs1);
-                    runGood = true;
-                } catch (TwitterException e) {
-                    if (e.getMessage().contains("rate limit")) {
-                        System.out.println("Rate limit exceeded while retrieving followers. Will sleep for 120s.");
-                        Thread.sleep(120000);
-                    } else
-                        throw new TwitterException(e.getMessage());
-                }
-            } while (runGood && ((cursor = ids.getNextCursor()) != 0)); //Takes advantage of lazy-evaluation.
-
+                ids = twitter.getFollowersIDs(userID, cursor);
+                long[] followerIDs1 = ids.getIDs();
+                followerIDs = ArrayUtils.addAll(followerIDs, followerIDs1);
+            } while ((cursor = ids.getNextCursor()) != 0);
         }
         return followerIDs;
     }
