@@ -2,12 +2,14 @@ package ES2SocialMediaAnalysis.franzmueller.twitter_puller;
 
 import ES2SocialMediaAnalysis.franzmueller.twitter_puller.RichTwitterObjects.RichUser;
 import ES2SocialMediaAnalysis.franzmueller.twitter_puller.util.RateLimitStatusListenerImpl;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.logging.log4j.LogManager;
 import twitter4j.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.*;
 
 /**
  * @author franzmueller
@@ -22,7 +24,7 @@ public class Main {
 
         //Get Tweets
         List<Status> tweets = new ArrayList<>();
-        Query query = new Query("to:DHLPaket");
+        Query query = new Query("to:janboehm");
         query.count(100);
         QueryResult queryResult = null;
         do {
@@ -57,6 +59,24 @@ public class Main {
         }
 
         */
+
+        //Write csv file
+        RichUser user;
+        Iterator<Map.Entry<Long, RichUser>> iterator = userManager.entrySet().iterator();
+        BufferedWriter writer = new BufferedWriter(new FileWriter("output.csv"));
+        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);
+        while (iterator.hasNext()) {
+            user = iterator.next().getValue();
+            csvPrinter.printRecord(user.getUser().getId());
+            long[] followers = user.getFollowers();
+            for (long follower : followers) csvPrinter.printRecord(follower);
+            csvPrinter.println();
+            csvPrinter.flush();
+            writer.flush();
+        }
+        csvPrinter.close();
+        writer.close();
+
 
         int brakepoint = 1;
     }

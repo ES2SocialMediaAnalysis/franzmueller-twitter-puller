@@ -2,6 +2,7 @@ package ES2SocialMediaAnalysis.franzmueller.twitter_puller.RichTwitterObjects;
 
 import ES2SocialMediaAnalysis.franzmueller.twitter_puller.util.ReachCoefficient;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.logging.log4j.LogManager;
 import twitter4j.IDs;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -33,6 +34,7 @@ public class RichUser {
     public RichUser(User user, Twitter twitter) {
         this.user = user;
         this.twitter = twitter;
+        userID = user.getId();
         followerCount = user.getFollowersCount();
     }
 
@@ -47,15 +49,19 @@ public class RichUser {
         return reachCoefficient;
     }
 
-    public long[] getFollowers() throws TwitterException {
+    public long[] getFollowers() {
         if (followerIDs == null) {
-            long cursor = -1;
-            IDs ids;
-            do {
-                ids = twitter.getFollowersIDs(userID, cursor);
-                long[] followerIDs1 = ids.getIDs();
-                followerIDs = ArrayUtils.addAll(followerIDs, followerIDs1);
-            } while ((cursor = ids.getNextCursor()) != 0);
+            try {
+                long cursor = -1;
+                IDs ids;
+                do {
+                    ids = twitter.getFollowersIDs(userID, cursor);
+                    long[] followerIDs1 = ids.getIDs();
+                    followerIDs = ArrayUtils.addAll(followerIDs, followerIDs1);
+                } while ((cursor = ids.getNextCursor()) != 0);
+            } catch (TwitterException te) {
+                LogManager.getLogger().warn("Could not fetch followers of user " + userID + ". Maybe user is deleted?");
+            }
         }
         return followerIDs;
     }
