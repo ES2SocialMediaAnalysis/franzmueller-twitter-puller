@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ES2SocialMediaAnalysis/franzmueller-twitter-puller.svg?branch=master)](https://travis-ci.org/ES2SocialMediaAnalysis/franzmueller-twitter-puller)
+
 This is all very early stage.
 But you can try it, if you just clone it and play around with it. It's written in java and uses maven to build.
 
