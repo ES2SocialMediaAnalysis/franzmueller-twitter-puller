@@ -24,7 +24,7 @@ public class Main {
 
         //Get Tweets
         List<Status> tweets = new ArrayList<>();
-        Query query = new Query("to:DHLPaket");
+        Query query = new Query("to:" + args[0]);
         query.count(100);
         QueryResult queryResult = null;
         do {
