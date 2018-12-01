@@ -68,7 +68,7 @@ public class Main {
             //print following
             csvPrinterF.print(user.getUser().getId());
             long[] followers = user.getFollowers();
-            for (long follower : followers) csvPrinterF.print(follower);
+            if (followers != null) for (long follower : followers) csvPrinterF.print(follower);
             csvPrinterF.println();
             LogManager.getLogger().debug("Wrote user " + user.getUser().getScreenName() + " to following file");
         }
