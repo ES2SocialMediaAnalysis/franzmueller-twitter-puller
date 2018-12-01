@@ -25,13 +25,13 @@ public class Main {
         //Get Tweets
         List<Status> tweets = new ArrayList<>();
         Query query = new Query("to:DHLPaket");
-        query.count(5);
+        query.count(100);
         QueryResult queryResult = null;
-        //TODO do {
+        do {
             queryResult = twitter.search(query);
             tweets.addAll(queryResult.getTweets());
             LogManager.getLogger().debug("Found " + queryResult.getTweets().size() + " more tweets!");
-        //TODO } while ((query = queryResult.nextQuery()) != null);
+        } while ((query = queryResult.nextQuery()) != null);
 
         LogManager.getLogger().debug("Found " + tweets.size() + " total tweets!");
 
