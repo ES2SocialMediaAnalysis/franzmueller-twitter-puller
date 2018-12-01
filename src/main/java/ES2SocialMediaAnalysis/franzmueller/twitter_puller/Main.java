@@ -24,14 +24,14 @@ public class Main {
 
         //Get Tweets
         List<Status> tweets = new ArrayList<>();
-        Query query = new Query("to:janboehm");
-        query.count(100);
+        Query query = new Query("to:DHLPaket");
+        query.count(5);
         QueryResult queryResult = null;
-        do {
+        //TODO do {
             queryResult = twitter.search(query);
             tweets.addAll(queryResult.getTweets());
             LogManager.getLogger().debug("Found " + queryResult.getTweets().size() + " more tweets!");
-        } while ((query = queryResult.nextQuery()) != null);
+        //TODO } while ((query = queryResult.nextQuery()) != null);
 
         LogManager.getLogger().debug("Found " + tweets.size() + " total tweets!");
 
@@ -45,40 +45,40 @@ public class Main {
 
         LogManager.getLogger().debug("Identified " + userManager.size() + " unique users!");
 
-        /* TODO: this takes forever due to rate limit
+        //TODO: this takes forever due to rate limit
 
         //Analyze all users who tweeted at target
-        LogManager.getLogger().debug("Calculating RCs now");
+        LogManager.getLogger().debug("Calculating RC and following now and writing to files");
         RichUser user;
         Iterator<Map.Entry<Long, RichUser>> iterator = userManager.entrySet().iterator();
+        BufferedWriter writerRC = new BufferedWriter(new FileWriter("rc.csv"));
+        CSVPrinter csvPrinterRC = new CSVPrinter(writerRC, CSVFormat.DEFAULT);
+        BufferedWriter writerF = new BufferedWriter(new FileWriter("following.csv"));
+        CSVPrinter csvPrinterF = new CSVPrinter(writerF, CSVFormat.DEFAULT);
         while (iterator.hasNext()) {
+            //get user
             user = iterator.next().getValue();
-            user.getReachCoefficient();
-            LogManager.getLogger().debug("User " + user.getUser().getScreenName() + " has " + user.getFollowerCount() + " followers " +
-                    "and a RC of " + user.getReachCoefficient());
-        }
 
-        */
+            //print rc
+            csvPrinterRC.print(user.getUser().getId());
+            csvPrinterRC.print(user.getReachCoefficient());
+            csvPrinterRC.println();
+            LogManager.getLogger().debug("Wrote user " + user.getUser().getScreenName() + " to rc file");
 
-        //Write csv file
-        RichUser user;
-        Iterator<Map.Entry<Long, RichUser>> iterator = userManager.entrySet().iterator();
-        BufferedWriter writer = new BufferedWriter(new FileWriter("output.csv"));
-        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);
-        while (iterator.hasNext()) {
-            user = iterator.next().getValue();
-            csvPrinter.printRecord(user.getUser().getId());
+            //print following
+            csvPrinterF.print(user.getUser().getId());
             long[] followers = user.getFollowers();
-            for (long follower : followers) csvPrinter.printRecord(follower);
-            csvPrinter.println();
-            csvPrinter.flush();
-            writer.flush();
+            for (long follower : followers) csvPrinterF.print(follower);
+            csvPrinterF.println();
+            LogManager.getLogger().debug("Wrote user " + user.getUser().getScreenName() + " to following file");
         }
-        csvPrinter.close();
-        writer.close();
 
-
-        int brakepoint = 1;
+        csvPrinterF.flush();
+        writerF.flush();
+        writerF.close();
+        csvPrinterRC.flush();
+        writerRC.flush();
+        writerRC.close();
     }
 }
 
