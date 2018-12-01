@@ -3,8 +3,7 @@ before_deploy:
       # Set up git user name and tag this commit
       - git config --local user.name $GIT_USER
       - git config --local user.email $GIT_EMAIL
-      - MVN_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version)
-      - git tag "$MVN_VERSION"
+      - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 
 deploy:
   provider: releases
