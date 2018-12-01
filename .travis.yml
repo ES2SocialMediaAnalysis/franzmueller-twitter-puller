@@ -1,0 +1,13 @@
+language: java
+before_deploy:
+      # Set up git user name and tag this commit
+      - git config --local user.name $GIT_USER
+      - git config --local user.email $GIT_EMAIL
+      - MVN_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version)
+      - git tag "$MVN_VERSION"
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: target/franzmueller-twitter-puller-jar-with-dependencies.jar
+  skip_cleanup: true
