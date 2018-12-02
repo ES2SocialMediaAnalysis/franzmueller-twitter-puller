@@ -10,7 +10,7 @@ public class RateLimitStatusListenerImpl implements RateLimitStatusListener {
     public void onRateLimitStatus(RateLimitStatusEvent rateLimitStatusEvent) {
         if (rateLimitStatusEvent.getRateLimitStatus().getRemaining() < 2) {
             try {
-                LogManager.getLogger().info("RateLimit almost exceeded, will sleep for "
+                LogManager.getLogger("RateLimit").info("RateLimit almost exceeded, will sleep for "
                         + (rateLimitStatusEvent.getRateLimitStatus().getSecondsUntilReset() + 2) + " seconds");
                 Thread.sleep((rateLimitStatusEvent.getRateLimitStatus().getSecondsUntilReset() * 1000) + 2000);
             } catch (InterruptedException e) {
@@ -22,6 +22,6 @@ public class RateLimitStatusListenerImpl implements RateLimitStatusListener {
 
     @Override
     public void onRateLimitReached(RateLimitStatusEvent rateLimitStatusEvent) {
-        LogManager.getLogger().fatal("RateLimit exceeded, somehow I wasn't able to catch this in time");
+        LogManager.getLogger("RateLimit").fatal("RateLimit exceeded, somehow I wasn't able to catch this in time");
     }
 }

@@ -60,7 +60,7 @@ public class RichUser {
                     followerIDs = ArrayUtils.addAll(followerIDs, followerIDs1);
                 } while ((cursor = ids.getNextCursor()) != 0);
             } catch (TwitterException te) {
-                LogManager.getLogger().warn("Could not fetch followers of user " + userID + ". Maybe user is deleted?");
+                LogManager.getLogger("RichUser").warn("Could not fetch followers of user " + userID + ". Maybe user is deleted?");
             }
         }
         return followerIDs;
