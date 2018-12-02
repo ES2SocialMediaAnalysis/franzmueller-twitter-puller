@@ -53,31 +53,34 @@ public class Main {
         Iterator<Map.Entry<Long, RichUser>> iterator = userManager.entrySet().iterator();
         BufferedWriter writerRC = new BufferedWriter(new FileWriter("rc.csv"));
         CSVPrinter csvPrinterRC = new CSVPrinter(writerRC, CSVFormat.DEFAULT);
-        BufferedWriter writerF = new BufferedWriter(new FileWriter("following.csv"));
-        CSVPrinter csvPrinterF = new CSVPrinter(writerF, CSVFormat.DEFAULT);
+        BufferedWriter writerE = new BufferedWriter(new FileWriter("edges.csv"));
+        CSVPrinter csvPrinterE = new CSVPrinter(writerE, CSVFormat.DEFAULT);
+
         while (iterator.hasNext()) {
             //get user
             user = iterator.next().getValue();
 
+        /*TODO this doesn't seem to work properly
             //print rc
             csvPrinterRC.print(user.getUser().getId());
             csvPrinterRC.print(user.getReachCoefficient());
             csvPrinterRC.println();
             LogManager.getLogger().debug("Wrote user " + user.getUser().getScreenName() + " to rc file");
-
+            csvPrinterRC.flush();
+            writerRC.flush();
+        */
             //print following
-            csvPrinterF.print(user.getUser().getId());
             long[] followers = user.getFollowers();
-            if (followers != null) for (long follower : followers) csvPrinterF.print(follower);
-            csvPrinterF.println();
-            LogManager.getLogger().debug("Wrote user " + user.getUser().getScreenName() + " to following file");
+            if (followers != null && followers.length > 0) for (long follower : followers) {
+                csvPrinterE.print(follower);
+                csvPrinterE.print(user.getUser().getId());
+                csvPrinterE.println();
+            }
+            csvPrinterE.flush();
+            writerE.flush();
+            LogManager.getLogger().debug("Wrote user " + user.getUser().getScreenName() + " to edges file");
         }
-
-        csvPrinterF.flush();
-        writerF.flush();
-        writerF.close();
-        csvPrinterRC.flush();
-        writerRC.flush();
+        writerE.close();
         writerRC.close();
     }
 }
